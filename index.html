@@ -569,7 +569,6 @@
   }
   .pf-logo img{
     height:42px; width:auto; max-width:180px; display:block; object-fit:contain;
-    border-radius:4px; background:#000;
   }
 
   .pf-add-row{display:flex; gap:6px; margin-top:6px;}
@@ -782,16 +781,32 @@
   }
   .pm-close:hover{background:var(--surface); color:var(--text);}
 
-  .pm-schedule-bar{
-    display:flex; align-items:center; justify-content:flex-start; gap:10px; flex-wrap:wrap;
-    padding:10px 22px; border-bottom:1px solid var(--border); background:var(--surface);
+  .pm-main{
+    flex:1; min-height:0; display:flex; align-items:stretch;
   }
-  .pm-schedule-bar > .btn{flex-shrink:0;}
-  .pm-schedule-info{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-dim); flex:1; min-width:0;}
-  .pm-schedule-info svg{width:14px; height:14px; color:var(--text-faint); flex-shrink:0;}
+  .pm-sidebar{
+    width:20%; min-width:168px; max-width:240px; flex-shrink:0;
+    border-right:1px solid var(--border); background:var(--surface);
+    display:flex; flex-direction:column; overflow-y:auto; padding:12px 10px; gap:8px;
+  }
+  .pm-schedule-bar{
+    display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; gap:8px;
+    padding:10px; border:1px solid var(--border); border-radius:var(--radius-sm);
+    background:var(--white);
+  }
+  .pm-schedule-bar > .btn{flex-shrink:0; width:100%; justify-content:center; white-space:normal; text-align:center; line-height:1.25;}
+  .pm-schedule-info{
+    display:flex; align-items:flex-start; gap:7px; font-size:11.5px; color:var(--text-dim);
+    line-height:1.4; min-width:0;
+  }
+  .pm-schedule-info svg{width:14px; height:14px; color:var(--text-faint); flex-shrink:0; margin-top:1px;}
   .pm-schedule-info strong{color:var(--text); font-weight:600;}
+  .pm-schedule-info .partner-chips{margin-top:4px;}
 
-  .pm-tabs{display:flex; gap:2px; padding:0 22px; border-bottom:1px solid var(--border); overflow-x:auto;}
+  .pm-content{
+    flex:1; min-width:0; display:flex; flex-direction:column; min-height:0;
+  }
+  .pm-tabs{display:flex; gap:2px; padding:0 22px; border-bottom:1px solid var(--border); overflow-x:auto; flex-shrink:0;}
   .pm-tab{
     padding:11px 4px; font-size:13px; font-weight:500; color:var(--text-faint); border-bottom:2px solid transparent;
     margin-right:20px; transition:color .12s ease; white-space:nowrap;
@@ -800,6 +815,15 @@
   .pm-tab.active{color:var(--text); border-bottom-color:var(--black); font-weight:600;}
 
   .pm-body{flex:1; overflow-y:auto; padding:20px 22px;}
+
+  @media (max-width:720px){
+    .pm-main{flex-direction:column;}
+    .pm-sidebar{
+      width:100%; max-width:none; min-width:0; border-right:none; border-bottom:1px solid var(--border);
+      flex-direction:row; flex-wrap:wrap; overflow-x:auto;
+    }
+    .pm-schedule-bar{flex:1; min-width:160px;}
+  }
 
   /* tasks */
   .add-row{display:flex; gap:8px; margin-bottom:16px;}
@@ -1423,57 +1447,63 @@
         <div class="pm-close" id="pmClose">✕</div>
       </div>
     </div>
-    <div class="pm-schedule-bar">
-      <button class="btn btn-ghost btn-sm" id="pmEditDue">Set due date</button>
-      <div class="pm-schedule-info" id="pmDueInfo"></div>
-    </div>
-    <div class="pm-schedule-bar">
-      <button class="btn btn-ghost btn-sm" id="pmEditSchedule">Edit schedule</button>
-      <div class="pm-schedule-info" id="pmScheduleInfo"></div>
-    </div>
-    <div class="pm-schedule-bar" id="pmPartnersBar" style="background:transparent;">
-      <button class="btn btn-ghost btn-sm" id="pmEditPartners">Edit partners</button>
-      <div class="pm-schedule-info" style="flex:1;flex-wrap:wrap;">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span id="pmPartnersLabel">No partners</span>
-        <div class="partner-chips" id="pmPartnerChips"></div>
-      </div>
-    </div>
-    <div class="pm-tabs">
-      <div class="pm-tab active" data-tab="tasks">Tasks</div>
-      <div class="pm-tab" data-tab="accomplished">Accomplished</div>
-      <div class="pm-tab" data-tab="board">Board</div>
-      <div class="pm-tab" data-tab="timeline">Timeline</div>
-      <div class="pm-tab" data-tab="notes">Notes</div>
-    </div>
-    <div class="pm-body">
-      <div id="tabTasks">
-        <div class="add-row">
-          <input type="text" id="newTaskInput" placeholder="Add a task and press Enter" maxlength="140" />
-          <select id="newTaskAssignee" title="Assign partner">
-            <option value="">Unassigned</option>
-          </select>
-          <button class="btn btn-primary btn-sm" id="addTaskBtn">Add</button>
+    <div class="pm-main">
+      <aside class="pm-sidebar">
+        <div class="pm-schedule-bar">
+          <button class="btn btn-ghost btn-sm" id="pmEditDue">Set due date</button>
+          <div class="pm-schedule-info" id="pmDueInfo"></div>
         </div>
-        <div class="task-list" id="taskList"></div>
-      </div>
-      <div id="tabAccomplished" class="hidden">
-        <p class="acc-hint">Log what you already finished on this project. These stay out of your task list.</p>
-        <div class="add-row">
-          <input type="text" id="newAccInput" placeholder="What did you accomplish? Press Enter to save" maxlength="200" />
-          <button class="btn btn-primary btn-sm" id="addAccBtn">Log</button>
+        <div class="pm-schedule-bar">
+          <button class="btn btn-ghost btn-sm" id="pmEditSchedule">Edit schedule</button>
+          <div class="pm-schedule-info" id="pmScheduleInfo"></div>
         </div>
-        <div class="acc-list" id="accList"></div>
-      </div>
-      <div id="tabBoard" class="hidden">
-        <div class="board" id="boardCols"></div>
-      </div>
-      <div id="tabTimeline" class="hidden">
-        <div class="timeline" id="timeline"></div>
-      </div>
-      <div id="tabNotes" class="hidden">
-        <textarea class="notes-area" id="notesArea" placeholder="Jot down notes, decisions, links..."></textarea>
-        <div class="notes-hint">Saved automatically</div>
+        <div class="pm-schedule-bar" id="pmPartnersBar">
+          <button class="btn btn-ghost btn-sm" id="pmEditPartners">Edit partners</button>
+          <div class="pm-schedule-info" style="flex-wrap:wrap;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span id="pmPartnersLabel">No partners</span>
+            <div class="partner-chips" id="pmPartnerChips"></div>
+          </div>
+        </div>
+      </aside>
+      <div class="pm-content">
+        <div class="pm-tabs">
+          <div class="pm-tab active" data-tab="tasks">Tasks</div>
+          <div class="pm-tab" data-tab="accomplished">Accomplished</div>
+          <div class="pm-tab" data-tab="board">Board</div>
+          <div class="pm-tab" data-tab="timeline">Timeline</div>
+          <div class="pm-tab" data-tab="notes">Notes</div>
+        </div>
+        <div class="pm-body">
+          <div id="tabTasks">
+            <div class="add-row">
+              <input type="text" id="newTaskInput" placeholder="Add a task and press Enter" maxlength="140" />
+              <select id="newTaskAssignee" title="Assign partner">
+                <option value="">Unassigned</option>
+              </select>
+              <button class="btn btn-primary btn-sm" id="addTaskBtn">Add</button>
+            </div>
+            <div class="task-list" id="taskList"></div>
+          </div>
+          <div id="tabAccomplished" class="hidden">
+            <p class="acc-hint">Log what you already finished on this project. These stay out of your task list.</p>
+            <div class="add-row">
+              <input type="text" id="newAccInput" placeholder="What did you accomplish? Press Enter to save" maxlength="200" />
+              <button class="btn btn-primary btn-sm" id="addAccBtn">Log</button>
+            </div>
+            <div class="acc-list" id="accList"></div>
+          </div>
+          <div id="tabBoard" class="hidden">
+            <div class="board" id="boardCols"></div>
+          </div>
+          <div id="tabTimeline" class="hidden">
+            <div class="timeline" id="timeline"></div>
+          </div>
+          <div id="tabNotes" class="hidden">
+            <textarea class="notes-area" id="notesArea" placeholder="Jot down notes, decisions, links..."></textarea>
+            <div class="notes-hint">Saved automatically</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2632,7 +2662,7 @@
     } else {
       pmDueInfo.innerHTML =
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'+
-        'No due date set — add a timeline to track if this project is due.';
+        'No due date set';
       document.getElementById('pmEditDue').textContent = 'Set due date';
     }
 
@@ -2640,13 +2670,13 @@
       const live = isNowInRange(p.scheduleStart, p.scheduleEnd);
       pmScheduleInfo.innerHTML =
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'+
-        'Scheduled <strong>'+formatTime(p.scheduleStart)+' – '+formatTime(p.scheduleEnd)+'</strong>'+
+        '<strong>'+formatTime(p.scheduleStart)+' – '+formatTime(p.scheduleEnd)+'</strong>'+
         (durationLabel(p.scheduleStart,p.scheduleEnd) ? ' · '+durationLabel(p.scheduleStart,p.scheduleEnd) : '')+
         (live ? ' <span class="now-chip"><span class="pulse"></span>Now</span>' : '');
     } else {
       pmScheduleInfo.innerHTML =
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'+
-        'No work hours set yet — allot a time block to organize your day.';
+        'No work hours set';
     }
 
     renderPartnersBar(p);
@@ -2910,7 +2940,7 @@
     const list = partnersOf(p);
     chips.innerHTML = '';
     if(!list.length){
-      label.textContent = 'No partners / colleagues';
+      label.textContent = 'No partners';
       return;
     }
     label.textContent = 'Partners:';
