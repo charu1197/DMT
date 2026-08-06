@@ -1186,7 +1186,7 @@
               </div>
               <div class="pf-logo">
                 <div>
-                  <div class="editable" id="pfCompany" contenteditable="true" data-placeholder="Company name" style="font-weight:800;"></div>
+                  <div class="editable" id="pfCompany" contenteditable="true" style="font-weight:800;"></div>
                 </div>
                 <img src="DES_logo.png" alt="DES Financing Corporation" />
               </div>
@@ -2998,7 +2998,7 @@
     const p = projects.find(x=>x.id===dueEditId);
     if(!p) return;
     p.dueDate = null;
-    save();
+    save();     
     closeDueModal();
     renderDashboard();
     if(activeProjectId===p.id) renderProjectModal();
