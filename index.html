@@ -1609,27 +1609,6 @@
     applyTheme(current === 'dark' ? 'light' : 'dark');
   });
 
-  /* ---------------- seed example ---------------- */
-  function seed(){
-    const base = Date.now()-86400000*3;
-    const p = {
-      id: uid('proj_'), name:'Website Relaunch', description:'Rebuild marketing site with new design system.',
-      color:'#0070f3', icon:'rocket', notes:'Kickoff call notes:\n- Align on new nav structure\n- Design review every Thursday',
-      createdAt: base, scheduleStart:'09:00', scheduleEnd:'11:00', completed:false, completedAt:null,
-      partners: [],
-      tasks:[
-        {id:uid('task_'), text:'Audit existing site content', status:'done', createdAt: base+3600000, updatedAt: base+86400000},
-        {id:uid('task_'), text:'Wireframe homepage', status:'done', createdAt: base+7200000, updatedAt: base+86400000*2},
-        {id:uid('task_'), text:'Build design system tokens', status:'inprogress', createdAt: base+86400000, updatedAt: base+86400000*2},
-        {id:uid('task_'), text:'Implement navigation component', status:'todo', createdAt: base+86400000*2, updatedAt: base+86400000*2},
-        {id:uid('task_'), text:'Stakeholder review meeting', status:'pending', createdAt: base+86400000*2+3600000, updatedAt: base+86400000*2+3600000},
-        {id:uid('task_'), text:'QA on mobile breakpoints', status:'todo', createdAt: base+86400000*3, updatedAt: base+86400000*3},
-      ]
-    };
-    projects.push(p);
-    save();
-  }
-
   /* ---------------- dashboard rendering ---------------- */
   const grid = document.getElementById('grid');
   const doneGrid = document.getElementById('doneGrid');
@@ -3012,7 +2991,7 @@
     const savedView = localStorage.getItem(VIEW_KEY);
     if(savedView === 'list' || savedView === 'cards') projectsView = savedView;
   }catch(e){}
-  if(!load()) seed();
+  load();
   renderDashboard();
 })();
 </script>
