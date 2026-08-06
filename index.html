@@ -653,11 +653,95 @@
   .field{margin-bottom:16px;}
   .field label{display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:var(--text-dim);}
   .field .hint{font-weight:400; color:var(--text-faint);}
-  .field input[type=text], .field input[type=time], .field textarea, .field select{
+  .field input[type=text], .field input[type=time], .field input[type=password], .field input[type=url], .field textarea, .field select{
     width:100%; border:1px solid var(--border); border-radius:var(--radius-sm); padding:9px 11px;
     font-size:13.5px; outline:none; transition:border-color .12s ease; background:var(--bg); color:var(--text);
   }
   .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--black); box-shadow:0 0 0 3px color-mix(in srgb, var(--black) 8%, transparent);}
+  .field-password{position:relative;}
+  .field-password input{padding-right:40px;}
+  .field-password .pw-toggle{
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    width:28px; height:28px; border-radius:6px; color:var(--text-faint);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .field-password .pw-toggle:hover{color:var(--text); background:var(--surface);}
+  .field-password .pw-toggle svg{width:16px; height:16px;}
+
+  /* ---------- credentials page ---------- */
+  .creds-page{
+    flex:1; width:100%; padding:36px 32px 80px;
+    display:flex; justify-content:center;
+  }
+  .creds-inner{width:100%; max-width:760px;}
+  .creds-toolbar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-bottom:8px; flex-wrap:wrap;
+  }
+  .creds-toolbar h1{font-size:22px; font-weight:700; letter-spacing:-0.02em;}
+  .creds-lead{font-size:13px; color:var(--text-dim); margin:0 0 20px; max-width:520px;}
+  .creds-search-wrap{position:relative; margin-bottom:18px;}
+  .creds-search-wrap svg{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    width:15px; height:15px; color:var(--text-faint); pointer-events:none;
+  }
+  .creds-search{
+    width:100%; border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:10px 12px 10px 36px; font-size:13.5px; outline:none;
+    background:var(--bg); color:var(--text); transition:border-color .12s ease;
+  }
+  .creds-search:focus{border-color:var(--black); box-shadow:0 0 0 3px color-mix(in srgb, var(--black) 8%, transparent);}
+  .creds-list{display:flex; flex-direction:column; gap:10px;}
+  .cred-card{
+    border:1px solid var(--border); border-radius:10px; background:var(--white);
+    padding:16px 18px; transition:border-color .12s ease, box-shadow .12s ease;
+  }
+  .cred-card:hover{border-color:var(--border-strong); box-shadow:var(--shadow-hover);}
+  .cred-card-top{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px;
+  }
+  .cred-card-title{font-size:14.5px; font-weight:650; letter-spacing:-0.01em; line-height:1.3;}
+  .cred-card-link{
+    display:inline-block; margin-top:3px; font-size:12px; color:var(--text-dim);
+    font-family:var(--font-mono); text-decoration:none; word-break:break-all;
+  }
+  .cred-card-link:hover{color:var(--text); text-decoration:underline;}
+  .cred-card-actions{display:flex; gap:4px; flex-shrink:0;}
+  .cred-card-actions .icon-btn{
+    width:30px; height:30px; border-radius:6px; border:1px solid transparent;
+    display:flex; align-items:center; justify-content:center; color:var(--text-faint);
+  }
+  .cred-card-actions .icon-btn:hover{background:var(--surface); border-color:var(--border); color:var(--text);}
+  .cred-card-actions .icon-btn.danger:hover{color:var(--danger); background:var(--danger-bg); border-color:var(--danger-border);}
+  .cred-card-actions .icon-btn svg{width:15px; height:15px;}
+  .cred-row{
+    display:flex; align-items:center; gap:8px; padding:7px 0;
+    border-top:1px solid var(--border);
+  }
+  .cred-row-label{
+    width:56px; flex-shrink:0; font-family:var(--font-mono); font-size:11px;
+    color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em;
+  }
+  .cred-row-value{
+    flex:1; min-width:0; font-size:13px; font-family:var(--font-mono);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .cred-row-value.masked{letter-spacing:0.12em;}
+  .cred-row-btns{display:flex; gap:2px; flex-shrink:0;}
+  .cred-row-btns .icon-btn{
+    width:28px; height:28px; border-radius:6px;
+    display:flex; align-items:center; justify-content:center; color:var(--text-faint);
+  }
+  .cred-row-btns .icon-btn:hover{background:var(--surface); color:var(--text);}
+  .cred-row-btns .icon-btn.copied{color:var(--success);}
+  .cred-row-btns .icon-btn svg{width:14px; height:14px;}
+  .toast{
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(12px);
+    background:var(--black); color:var(--bg); font-size:12.5px; font-weight:500;
+    padding:9px 16px; border-radius:8px; z-index:200;
+    opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
   .time-row{display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:end;}
   .time-row .to{font-size:12px; color:var(--text-faint); padding-bottom:10px; text-align:center;}
 
@@ -807,6 +891,7 @@
     }
     .dashboard-main{padding:28px 20px 60px;}
     .reports-page{padding:28px 20px 60px;}
+    .creds-page{padding:28px 20px 60px;}
   }
   @media (max-width:640px){
     .board{grid-template-columns:1fr;}
@@ -814,10 +899,12 @@
     .topbar{padding:14px 16px;}
     .dashboard-main{padding:22px 16px 60px;}
     .reports-page{padding:22px 16px 60px;}
+    .creds-page{padding:22px 16px 60px;}
     .grid{grid-template-columns:1fr;}
     .schedule-sidebar{max-height:360px;}
     .stats-grid{grid-template-columns:1fr 1fr;}
     .nav-link{padding:6px 8px; font-size:12px;}
+    .cred-row-label{width:48px;}
   }
 </style>
 </head>
@@ -829,6 +916,7 @@
       <nav class="nav-links">
         <button class="nav-link active" data-page="projects">Projects</button>
         <button class="nav-link" data-page="reports">Reports</button>
+        <button class="nav-link" data-page="credentials">Credentials</button>
         <button class="nav-link" data-page="profile">Profile</button>
       </nav>
     </div>
@@ -930,6 +1018,24 @@
           </div>
           <div class="accomplish-list" id="accomplishList"></div>
         </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Credentials page -->
+  <div class="page" id="pageCredentials">
+    <div class="creds-page">
+      <div class="creds-inner">
+        <div class="creds-toolbar">
+          <h1>Credentials</h1>
+          <button class="btn btn-primary btn-sm" id="newCredBtn">+ Add credential</button>
+        </div>
+        <p class="creds-lead">Save names, links, usernames, and passwords so you don’t forget them. Stored only in this browser.</p>
+        <div class="creds-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="search" class="creds-search" id="credsSearch" placeholder="Search by name, link, or username…" autocomplete="off" />
+        </div>
+        <div class="creds-list" id="credsList"></div>
       </div>
     </div>
   </div>
@@ -1040,6 +1146,41 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- credential modal -->
+<div class="overlay hidden" id="credOverlay">
+  <div class="modal small">
+    <div style="margin-bottom:18px;">
+      <h3 style="font-size:16px;font-weight:700;letter-spacing:-0.01em;margin-bottom:4px;" id="credModalTitle">Add credential</h3>
+      <p style="font-size:12.5px;color:var(--text-dim);">Name what it is, then save the link, username, and password.</p>
+    </div>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="credName" placeholder="e.g. GitHub, Office 365, Wi‑Fi" maxlength="80" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>Link <span class="hint">(optional)</span></label>
+      <input type="url" id="credLink" placeholder="https://…" maxlength="300" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="credUser" placeholder="email or username" maxlength="120" autocomplete="off" />
+    </div>
+    <div class="field" style="margin-bottom:2px;">
+      <label>Password</label>
+      <div class="field-password">
+        <input type="password" id="credPass" placeholder="password" maxlength="200" autocomplete="new-password" />
+        <button type="button" class="pw-toggle" id="credPassToggle" title="Show password" aria-label="Show password">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelCred">Cancel</button>
+      <button class="btn btn-primary" id="confirmCred">Save</button>
     </div>
   </div>
 </div>
@@ -1305,6 +1446,8 @@
   </div>
 </div>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
 (function(){
   "use strict";
@@ -1314,6 +1457,7 @@
   const COUNTER_KEY = 'tracker_id_counter';
   const PROFILE_KEY = 'tracker_profile_v2';
   const IDEAS_KEY = 'tracker_ideas_v1';
+  const CREDS_KEY = 'tracker_credentials_v1';
   const VIEW_KEY = 'tracker_projects_view';
 
   /* ---------------- data ---------------- */
@@ -1358,6 +1502,7 @@
 
   let projects = [];
   let ideas = [];
+  let credentials = [];
   let idCounter = 1;
   let activeProjectId = null;
   let selectedColor = COLORS[0].hex;
@@ -1367,6 +1512,10 @@
   let pendingDeleteId = null;
   let scheduleEditId = null;
   let activeIdeaId = null;
+  let credEditId = null;
+  let revealedCredIds = new Set();
+  let credsQuery = '';
+  let toastTimer = null;
 
   function defaultProfile(){
     return {
@@ -1517,6 +1666,7 @@
       localStorage.setItem(COUNTER_KEY, String(idCounter));
       localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
       localStorage.setItem(IDEAS_KEY, JSON.stringify(ideas));
+      localStorage.setItem(CREDS_KEY, JSON.stringify(credentials));
     }catch(e){ console.warn('Could not save data', e); }
   }
 
@@ -1543,6 +1693,25 @@
     }catch(e){ ideas = []; }
   }
 
+  function loadCredentials(){
+    try{
+      const raw = localStorage.getItem(CREDS_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed)){
+          credentials = parsed.map(c=>({
+            id: c.id || uid('cred_'),
+            name: c.name || '',
+            link: c.link || '',
+            username: c.username || '',
+            password: c.password || '',
+            createdAt: c.createdAt || Date.now(),
+          }));
+        }
+      }
+    }catch(e){ credentials = []; }
+  }
+
   function load(){
     loadProfile();
     loadIdeas();
@@ -1554,10 +1723,12 @@
         const parsed = JSON.parse(raw);
         if(Array.isArray(parsed)){
           projects = parsed.map(normalizeProject);
+          loadCredentials();
           return true;
         }
       }
     }catch(e){ console.warn('Could not load projects', e); }
+    loadCredentials();
     return false;
   }
 
@@ -2062,10 +2233,13 @@
     currentPage = page;
     document.getElementById('pageProjects').classList.toggle('active', page==='projects');
     document.getElementById('pageReports').classList.toggle('active', page==='reports');
+    document.getElementById('pageCredentials').classList.toggle('active', page==='credentials');
     document.getElementById('pageProfile').classList.toggle('active', page==='profile');
     document.querySelectorAll('.nav-link').forEach(l=> l.classList.toggle('active', l.dataset.page===page));
-    brandSub.textContent = page==='reports' ? '/ reports' : (page==='profile' ? '/ profile' : '/ projects');
+    const subs = {projects:'/ projects', reports:'/ reports', credentials:'/ credentials', profile:'/ profile'};
+    brandSub.textContent = subs[page] || '/ projects';
     if(page==='reports') renderReports();
+    if(page==='credentials') renderCredentials();
     if(page==='profile') renderProfile();
   }
 
@@ -2317,6 +2491,7 @@
       else if(document.getElementById('dueOverlay').classList.contains('show')) closeDueModal();
       else if(document.getElementById('partnersOverlay').classList.contains('show')) closePartnersModal();
       else if(document.getElementById('ideasOverlay').classList.contains('show')) closeIdeas();
+      else if(document.getElementById('credOverlay').classList.contains('show')) closeCredModal();
       else if(scheduleOverlay.classList.contains('show')) closeScheduleModal();
       else if(deleteOverlay.classList.contains('show')) closeDeleteConfirm();
       else if(projectOverlay.classList.contains('show')) closeProject();
@@ -2982,6 +3157,231 @@
       sheet.classList.remove('exporting');
       btn.disabled = false;
       btn.textContent = 'Download as image';
+    }
+  });
+
+  /* ---------------- credentials ---------------- */
+  const credOverlay = document.getElementById('credOverlay');
+  const credName = document.getElementById('credName');
+  const credLink = document.getElementById('credLink');
+  const credUser = document.getElementById('credUser');
+  const credPass = document.getElementById('credPass');
+  const credPassToggle = document.getElementById('credPassToggle');
+  const credsList = document.getElementById('credsList');
+  const credsSearch = document.getElementById('credsSearch');
+  const toastEl = document.getElementById('toast');
+
+  const ICON_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const ICON_EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.4 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.2 3.2"/><path d="M6.1 6.1C3.9 7.7 2 12 2 12s3.5 7 10 7a10.3 10.3 0 0 0 4.2-.9"/></svg>';
+  const ICON_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+  const ICON_EDIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+  const ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>';
+
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> toastEl.classList.remove('show'), 1600);
+  }
+
+  function copyText(text, btn){
+    const value = text || '';
+    const done = ()=>{
+      if(btn){
+        btn.classList.add('copied');
+        setTimeout(()=> btn.classList.remove('copied'), 1200);
+      }
+      showToast(value ? 'Copied to clipboard' : 'Nothing to copy');
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(value).then(done).catch(()=>{
+        fallbackCopy(value); done();
+      });
+    }else{
+      fallbackCopy(value); done();
+    }
+  }
+
+  function fallbackCopy(text){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  function normalizeCredLink(link){
+    const t = (link||'').trim();
+    if(!t) return '';
+    if(/^https?:\/\//i.test(t)) return t;
+    return 'https://' + t;
+  }
+
+  function setCredPassVisible(visible){
+    credPass.type = visible ? 'text' : 'password';
+    credPassToggle.innerHTML = visible ? ICON_EYE_OFF : ICON_EYE;
+    credPassToggle.title = visible ? 'Hide password' : 'Show password';
+    credPassToggle.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
+  }
+
+  function openCredModal(id){
+    credEditId = id || null;
+    const existing = id ? credentials.find(c=>c.id===id) : null;
+    document.getElementById('credModalTitle').textContent = existing ? 'Edit credential' : 'Add credential';
+    credName.value = existing ? existing.name : '';
+    credLink.value = existing ? existing.link : '';
+    credUser.value = existing ? existing.username : '';
+    credPass.value = existing ? existing.password : '';
+    setCredPassVisible(false);
+    credName.style.borderColor = '';
+    credOverlay.classList.remove('hidden');
+    requestAnimationFrame(()=>{
+      credOverlay.classList.add('show');
+      credName.focus();
+    });
+  }
+
+  function closeCredModal(){
+    credOverlay.classList.remove('show');
+    setTimeout(()=>credOverlay.classList.add('hidden'), 160);
+    credEditId = null;
+  }
+
+  function filteredCredentials(){
+    const q = credsQuery.trim().toLowerCase();
+    if(!q) return credentials.slice().sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+    return credentials.filter(c=>{
+      return (c.name||'').toLowerCase().includes(q)
+        || (c.link||'').toLowerCase().includes(q)
+        || (c.username||'').toLowerCase().includes(q);
+    }).sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+  }
+
+  function renderCredentials(){
+    const list = filteredCredentials();
+    if(!credentials.length){
+      credsList.innerHTML = `
+        <div class="empty-state">
+          <div class="glyph">◎</div>
+          <h3>No credentials saved</h3>
+          <p>Add a name, link, username, and password to keep them handy.</p>
+        </div>`;
+      return;
+    }
+    if(!list.length){
+      credsList.innerHTML = `
+        <div class="empty-state">
+          <div class="glyph">⌕</div>
+          <h3>No matches</h3>
+          <p>Try another search term.</p>
+        </div>`;
+      return;
+    }
+    credsList.innerHTML = list.map(c=>{
+      const revealed = revealedCredIds.has(c.id);
+      const passDisplay = revealed ? (c.password || '') : (c.password ? '••••••••' : '');
+      const href = c.link ? normalizeCredLink(c.link) : '';
+      const linkHtml = href
+        ? `<a class="cred-card-link" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(c.link)}</a>`
+        : `<span class="cred-card-link" style="opacity:.55;">No link</span>`;
+      return `
+        <article class="cred-card" data-id="${escapeHtml(c.id)}">
+          <div class="cred-card-top">
+            <div>
+              <div class="cred-card-title">${escapeHtml(c.name) || 'Untitled'}</div>
+              ${linkHtml}
+            </div>
+            <div class="cred-card-actions">
+              <button type="button" class="icon-btn" data-act="edit" title="Edit" aria-label="Edit">${ICON_EDIT}</button>
+              <button type="button" class="icon-btn danger" data-act="delete" title="Delete" aria-label="Delete">${ICON_TRASH}</button>
+            </div>
+          </div>
+          <div class="cred-row">
+            <span class="cred-row-label">User</span>
+            <span class="cred-row-value">${escapeHtml(c.username) || '—'}</span>
+            <div class="cred-row-btns">
+              <button type="button" class="icon-btn" data-act="copy-user" title="Copy username" aria-label="Copy username">${ICON_COPY}</button>
+            </div>
+          </div>
+          <div class="cred-row">
+            <span class="cred-row-label">Pass</span>
+            <span class="cred-row-value ${revealed ? '' : 'masked'}">${escapeHtml(passDisplay) || '—'}</span>
+            <div class="cred-row-btns">
+              <button type="button" class="icon-btn" data-act="toggle-pass" title="${revealed ? 'Hide password' : 'Show password'}" aria-label="${revealed ? 'Hide password' : 'Show password'}">${revealed ? ICON_EYE_OFF : ICON_EYE}</button>
+              <button type="button" class="icon-btn" data-act="copy-pass" title="Copy password" aria-label="Copy password">${ICON_COPY}</button>
+            </div>
+          </div>
+        </article>`;
+    }).join('');
+  }
+
+  document.getElementById('newCredBtn').addEventListener('click', ()=> openCredModal());
+  document.getElementById('cancelCred').addEventListener('click', closeCredModal);
+  credOverlay.addEventListener('click', (e)=>{ if(e.target===credOverlay) closeCredModal(); });
+  credPassToggle.addEventListener('click', ()=> setCredPassVisible(credPass.type === 'password'));
+
+  document.getElementById('confirmCred').addEventListener('click', ()=>{
+    const name = credName.value.trim();
+    if(!name){
+      credName.style.borderColor = 'var(--danger)';
+      credName.focus();
+      return;
+    }
+    const payload = {
+      name,
+      link: (credLink.value||'').trim(),
+      username: (credUser.value||'').trim(),
+      password: credPass.value || '',
+    };
+    if(credEditId){
+      const c = credentials.find(x=>x.id===credEditId);
+      if(c) Object.assign(c, payload);
+    }else{
+      credentials.push({
+        id: uid('cred_'),
+        ...payload,
+        createdAt: Date.now(),
+      });
+    }
+    save();
+    closeCredModal();
+    renderCredentials();
+  });
+
+  credName.addEventListener('input', ()=>{ credName.style.borderColor=''; });
+  credName.addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('confirmCred').click(); });
+
+  credsSearch.addEventListener('input', ()=>{
+    credsQuery = credsSearch.value;
+    renderCredentials();
+  });
+
+  credsList.addEventListener('click', (e)=>{
+    const btn = e.target.closest('[data-act]');
+    if(!btn) return;
+    const card = btn.closest('.cred-card');
+    if(!card) return;
+    const id = card.dataset.id;
+    const c = credentials.find(x=>x.id===id);
+    if(!c) return;
+    const act = btn.dataset.act;
+    if(act==='edit') openCredModal(id);
+    else if(act==='delete'){
+      if(!confirm('Delete credential "'+(c.name||'Untitled')+'"?')) return;
+      credentials = credentials.filter(x=>x.id!==id);
+      revealedCredIds.delete(id);
+      save();
+      renderCredentials();
+    }
+    else if(act==='copy-user') copyText(c.username, btn);
+    else if(act==='copy-pass') copyText(c.password, btn);
+    else if(act==='toggle-pass'){
+      if(revealedCredIds.has(id)) revealedCredIds.delete(id);
+      else revealedCredIds.add(id);
+      renderCredentials();
     }
   });
 
