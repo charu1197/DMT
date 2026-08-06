@@ -624,6 +624,7 @@
     display:flex; align-items:center; justify-content:center; z-index:100;
     opacity:0; pointer-events:none; transition:opacity .16s ease;
   }
+  .overlay.above{z-index:140;}
   .overlay.show{opacity:1; pointer-events:auto;}
   .modal{
     background:var(--white); border-radius:12px; border:1px solid var(--border);
@@ -1282,7 +1283,7 @@
 </div>
 
 <!-- schedule allot modal -->
-<div class="overlay hidden" id="scheduleOverlay">
+<div class="overlay above hidden" id="scheduleOverlay">
   <div class="modal small">
     <div style="margin-bottom:18px;">
       <h3 style="font-size:16px;font-weight:700;letter-spacing:-0.01em;margin-bottom:4px;" id="schedModalTitle">Allot time</h3>
@@ -1354,7 +1355,7 @@
 </div>
 
 <!-- rename modal -->
-<div class="overlay hidden" id="renameOverlay">
+<div class="overlay above hidden" id="renameOverlay">
   <div class="modal small">
     <div style="margin-bottom:18px;">
       <h3 style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">Rename project</h3>
@@ -1372,7 +1373,7 @@
 </div>
 
 <!-- due date modal -->
-<div class="overlay hidden" id="dueOverlay">
+<div class="overlay above hidden" id="dueOverlay">
   <div class="modal small">
     <div style="margin-bottom:18px;">
       <h3 style="font-size:16px;font-weight:700;letter-spacing:-0.01em;" id="dueModalTitle">Set due date</h3>
@@ -1391,7 +1392,7 @@
 </div>
 
 <!-- partners modal -->
-<div class="overlay hidden" id="partnersOverlay">
+<div class="overlay above hidden" id="partnersOverlay">
   <div class="modal small">
     <div style="margin-bottom:18px;">
       <h3 style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">Edit partners</h3>
@@ -1409,7 +1410,7 @@
 </div>
 
 <!-- delete confirmation modal -->
-<div class="overlay hidden" id="deleteOverlay">
+<div class="overlay above hidden" id="deleteOverlay">
   <div class="modal confirm">
     <div class="confirm-body">
       <div class="confirm-icon">
