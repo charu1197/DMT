@@ -823,6 +823,25 @@
   .task-item:hover .task-del{opacity:1;}
   .task-del:hover{background:var(--danger-bg); color:var(--danger);}
 
+  /* accomplished log */
+  .acc-hint{font-size:12.5px; color:var(--text-dim); margin:-4px 0 14px;}
+  .acc-list{display:flex; flex-direction:column; gap:6px;}
+  .acc-item{
+    display:flex; align-items:flex-start; gap:10px; padding:11px 12px; border:1px solid var(--border);
+    border-radius:var(--radius-sm); background:var(--white);
+  }
+  .acc-check{
+    width:16px; height:16px; border-radius:5px; flex-shrink:0; margin-top:1px;
+    background:var(--success); border:1.5px solid var(--success); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;
+  }
+  .acc-body{flex:1; min-width:0;}
+  .acc-text{font-size:13.5px; line-height:1.4;}
+  .acc-meta{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); margin-top:3px;}
+  .acc-del{color:var(--text-faint); font-size:15px; padding:2px 6px; border-radius:4px; opacity:0; transition:opacity .12s ease; flex-shrink:0;}
+  .acc-item:hover .acc-del{opacity:1;}
+  .acc-del:hover{background:var(--danger-bg); color:var(--danger);}
+
   /* board */
   .board{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; height:100%;}
   .board-col{display:flex; flex-direction:column; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px; min-height:200px;}
@@ -1371,7 +1390,7 @@
         </svg>
       </div>
       <h3>Delete project?</h3>
-      <p>You're about to delete <span class="proj-name" id="deleteProjectName"></span>. All tasks and notes will be permanently removed. This cannot be undone.</p>
+      <p>You're about to delete <span class="proj-name" id="deleteProjectName"></span>. All tasks, accomplishments, and notes will be permanently removed. This cannot be undone.</p>
     </div>
     <div class="confirm-actions">
       <button class="btn btn-ghost" id="cancelDelete">Cancel</button>
@@ -1417,6 +1436,7 @@
     </div>
     <div class="pm-tabs">
       <div class="pm-tab active" data-tab="tasks">Tasks</div>
+      <div class="pm-tab" data-tab="accomplished">Accomplished</div>
       <div class="pm-tab" data-tab="board">Board</div>
       <div class="pm-tab" data-tab="timeline">Timeline</div>
       <div class="pm-tab" data-tab="notes">Notes</div>
@@ -1431,6 +1451,14 @@
           <button class="btn btn-primary btn-sm" id="addTaskBtn">Add</button>
         </div>
         <div class="task-list" id="taskList"></div>
+      </div>
+      <div id="tabAccomplished" class="hidden">
+        <p class="acc-hint">Log what you already finished on this project. These stay out of your task list.</p>
+        <div class="add-row">
+          <input type="text" id="newAccInput" placeholder="What did you accomplish? Press Enter to save" maxlength="200" />
+          <button class="btn btn-primary btn-sm" id="addAccBtn">Log</button>
+        </div>
+        <div class="acc-list" id="accList"></div>
       </div>
       <div id="tabBoard" class="hidden">
         <div class="board" id="boardCols"></div>
@@ -1755,6 +1783,11 @@
         assignee: t.assignee || '',
         createdAt: t.createdAt || p.createdAt || Date.now(),
         updatedAt: t.updatedAt || t.createdAt || p.createdAt || Date.now(),
+      })) : [],
+      accomplishments: Array.isArray(p.accomplishments) ? p.accomplishments.map(a=>({
+        id: a.id || uid('acc_'),
+        text: a.text || '',
+        createdAt: a.createdAt || p.createdAt || Date.now(),
       })) : [],
     };
   }
@@ -2196,6 +2229,17 @@
           id: p.id,
         });
       });
+      (p.accomplishments||[]).forEach(a=>{
+        items.push({
+          type: 'log',
+          title: a.text,
+          meta: escapeHtml(p.name) + ' · logged ' + timeAgo(a.createdAt),
+          ts: a.createdAt || p.createdAt,
+          color: p.color,
+          icon: p.icon,
+          id: p.id,
+        });
+      });
     });
     items.sort((a,b)=> b.ts - a.ts);
 
@@ -2203,7 +2247,7 @@
     accomplishList.innerHTML = '';
 
     if(!items.length){
-      accomplishList.innerHTML = '<div class="empty-state"><div class="glyph">✓</div><h3>No accomplishments yet</h3><p>Complete tasks or mark projects done to build your report.</p></div>';
+      accomplishList.innerHTML = '<div class="empty-state"><div class="glyph">✓</div><h3>No accomplishments yet</h3><p>Log what you did in a project, complete tasks, or mark projects done.</p></div>';
       return;
     }
 
@@ -2211,13 +2255,16 @@
       const row = document.createElement('div');
       row.className = 'accomplish-item';
       row.style.cursor = 'pointer';
+      const badge = item.type==='project'
+        ? '<span class="done-badge">✓ Done</span>'
+        : (item.type==='log' ? '<span class="tl-badge">logged</span>' : '<span class="tl-badge">task</span>');
       row.innerHTML =
         '<div class="ai-icon" style="background:'+item.color+'22;color:'+item.color+'">'+svgIcon(item.icon,17)+'</div>'+
         '<div class="ai-body">'+
           '<div class="ai-title">'+escapeHtml(item.title)+'</div>'+
           '<div class="ai-meta">'+item.meta+'</div>'+
         '</div>'+
-        (item.type==='project' ? '<span class="done-badge">✓ Done</span>' : '<span class="tl-badge">task</span>');
+        badge;
       row.addEventListener('click', ()=>{
         showPage('projects');
         openProject(item.id);
@@ -2446,7 +2493,7 @@
       color: selectedColor, icon: selectedIcon, notes:'', createdAt: Date.now(),
       scheduleStart, scheduleEnd, dueDate: parseDueDate(inpDue.value),
       completed:false, completedAt:null, forceActive:false,
-      partners: parsePartners(inpPartners.value), tasks: []
+      partners: parsePartners(inpPartners.value), tasks: [], accomplishments: []
     };
     projects.unshift(p);
     save();
@@ -2601,11 +2648,13 @@
 
     document.querySelectorAll('.pm-tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===activeTab));
     document.getElementById('tabTasks').classList.toggle('hidden', activeTab!=='tasks');
+    document.getElementById('tabAccomplished').classList.toggle('hidden', activeTab!=='accomplished');
     document.getElementById('tabBoard').classList.toggle('hidden', activeTab!=='board');
     document.getElementById('tabTimeline').classList.toggle('hidden', activeTab!=='timeline');
     document.getElementById('tabNotes').classList.toggle('hidden', activeTab!=='notes');
 
     if(activeTab==='tasks') renderTasks(p);
+    if(activeTab==='accomplished') renderAccomplishments(p);
     if(activeTab==='board') renderBoard(p);
     if(activeTab==='timeline') renderTimeline(p);
     if(activeTab==='notes') renderNotes(p);
@@ -2673,6 +2722,54 @@
   }
   document.getElementById('addTaskBtn').addEventListener('click', addTask);
   newTaskInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') addTask(); });
+
+  /* ---- accomplished tab ---- */
+  const accList = document.getElementById('accList');
+  const newAccInput = document.getElementById('newAccInput');
+
+  function renderAccomplishments(p){
+    if(!Array.isArray(p.accomplishments)) p.accomplishments = [];
+    accList.innerHTML = '';
+    const items = p.accomplishments.slice().sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+    if(!items.length){
+      accList.innerHTML = '<div class="board-empty" style="padding:30px 0;">No accomplishments logged yet — add what you finished above.</div>';
+      return;
+    }
+    items.forEach(a=>{
+      const row = document.createElement('div');
+      row.className = 'acc-item';
+      row.innerHTML =
+        '<div class="acc-check">✓</div>'+
+        '<div class="acc-body">'+
+          '<div class="acc-text">'+escapeHtml(a.text)+'</div>'+
+          '<div class="acc-meta">'+formatDate(a.createdAt)+' · '+timeAgo(a.createdAt)+'</div>'+
+        '</div>'+
+        '<div class="acc-del" title="Remove">✕</div>';
+      row.querySelector('.acc-del').addEventListener('click', ()=>{
+        p.accomplishments = p.accomplishments.filter(x=>x.id!==a.id);
+        save();
+        renderProjectModal();
+        if(currentPage==='reports') renderReports();
+        if(currentPage==='profile') renderProfile();
+      });
+      accList.appendChild(row);
+    });
+  }
+
+  function addAccomplishment(){
+    const p = currentProject();
+    const val = newAccInput.value.trim();
+    if(!val || !p) return;
+    if(!Array.isArray(p.accomplishments)) p.accomplishments = [];
+    p.accomplishments.push({id: uid('acc_'), text: val, createdAt: Date.now()});
+    newAccInput.value = '';
+    save();
+    renderProjectModal();
+    if(currentPage==='reports') renderReports();
+    if(currentPage==='profile') renderProfile();
+  }
+  document.getElementById('addAccBtn').addEventListener('click', addAccomplishment);
+  newAccInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') addAccomplishment(); });
 
   /* ---- board tab ---- */
   const boardCols = document.getElementById('boardCols');
@@ -2753,10 +2850,20 @@
       });
     });
 
+    (p.accomplishments||[]).forEach(a=>{
+      events.push({
+        type: 'accomplishment',
+        title: a.text,
+        detail: 'Accomplished',
+        ts: a.createdAt || p.createdAt,
+        status: 'done',
+      });
+    });
+
     events.sort((a,b)=> b.ts - a.ts);
 
-    if(events.length <= 1 && !p.tasks.length){
-      timelineEl.innerHTML = '<div class="board-empty" style="padding:30px 0;">No activity yet — add tasks to build your timeline.</div>';
+    if(events.length <= 1 && !p.tasks.length && !(p.accomplishments||[]).length){
+      timelineEl.innerHTML = '<div class="board-empty" style="padding:30px 0;">No activity yet — add tasks or log accomplishments to build your timeline.</div>';
       return;
     }
 
@@ -3084,10 +3191,13 @@
       p.tasks.filter(t=>t.status==='done').forEach(t=>{
         acc.push({text: t.text+' ('+p.name+')', ts: t.updatedAt||t.createdAt});
       });
+      (p.accomplishments||[]).forEach(a=>{
+        acc.push({text: a.text+' ('+p.name+')', ts: a.createdAt});
+      });
     });
     acc.sort((a,b)=>b.ts-a.ts);
     if(!acc.length){
-      autoAcc.innerHTML = '<li style="list-style:none;opacity:.75;">Complete tasks or projects to fill this</li>';
+      autoAcc.innerHTML = '<li style="list-style:none;opacity:.75;">Log accomplishments or complete tasks to fill this</li>';
     } else {
       acc.slice(0,12).forEach(item=>{
         const li = document.createElement('li');
