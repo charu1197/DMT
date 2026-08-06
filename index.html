@@ -564,12 +564,12 @@
   .pf-role h4{color:#0b4ea2; font-size:12px; font-weight:700; margin:0 0 6px; line-height:1.2;}
   .pf-role .target{font-size:14px; font-weight:800; color:#111; line-height:1.25;}
   .pf-logo{
-    align-self:flex-end; margin-top:10px; display:flex; align-items:center; gap:8px;
+    align-self:flex-end; margin-top:10px; display:flex; align-items:center; gap:10px;
     font-size:10px; font-weight:700; color:#0b4ea2; text-align:right; line-height:1.2;
   }
-  .pf-logo .cube{
-    width:34px; height:34px; background:linear-gradient(135deg,#0b4ea2,#3d7dd6);
-    clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  .pf-logo img{
+    height:42px; width:auto; max-width:180px; display:block; object-fit:contain;
+    border-radius:4px; background:#000;
   }
 
   .pf-add-row{display:flex; gap:6px; margin-top:6px;}
@@ -634,7 +634,7 @@
   .overlay.show .modal{transform:translateY(0) scale(1);}
   .modal.small{width:420px; padding:22px; max-width:92vw;}
   .modal.confirm{width:400px; padding:0; max-width:92vw; overflow:hidden;}
-  .modal.large{width:min(920px,92vw); height:min(660px,88vh); display:flex; flex-direction:column; padding:0;}
+  .modal.large{width:min(1180px,96vw); height:min(720px,90vh); display:flex; flex-direction:column; padding:0;}
 
   .confirm-body{padding:28px 24px 20px; text-align:center;}
   .confirm-icon{
@@ -783,11 +783,12 @@
   .pm-close:hover{background:var(--surface); color:var(--text);}
 
   .pm-schedule-bar{
-    display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-    padding:12px 22px; border-bottom:1px solid var(--border); background:var(--surface);
+    display:flex; align-items:center; justify-content:flex-start; gap:10px; flex-wrap:wrap;
+    padding:10px 22px; border-bottom:1px solid var(--border); background:var(--surface);
   }
-  .pm-schedule-info{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-dim);}
-  .pm-schedule-info svg{width:14px; height:14px; color:var(--text-faint);}
+  .pm-schedule-bar > .btn{flex-shrink:0;}
+  .pm-schedule-info{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-dim); flex:1; min-width:0;}
+  .pm-schedule-info svg{width:14px; height:14px; color:var(--text-faint); flex-shrink:0;}
   .pm-schedule-info strong{color:var(--text); font-weight:600;}
 
   .pm-tabs{display:flex; gap:2px; padding:0 22px; border-bottom:1px solid var(--border); overflow-x:auto;}
@@ -1070,7 +1071,7 @@
             <button class="btn btn-primary btn-sm" id="downloadProfileBtn">Download as image</button>
           </div>
         </div>
-        <p class="profile-hint">Blank template for any employee — click fields to fill in your details. Certifications and engagements are manual. Key projects and accomplishments sync automatically from Tracker.</p>
+        <p class="profile-hint">Blank template for any employee — click fields to fill in your details. Certifications, engagements, and accomplishments are manual. Key projects still sync automatically from Tracker.</p>
 
         <div class="profile-sheet" id="profileSheet">
           <!-- LEFT -->
@@ -1126,8 +1127,12 @@
               <button type="button" id="pfEmployeeAdd">Add</button>
             </div>
             <div class="line"></div>
-            <div class="pf-sub">Accomplishments <span class="auto-tag" style="font-size:9px;opacity:.85;">AUTO</span></div>
-            <ul class="pf-list" id="pfAccomplishAuto"></ul>
+            <div class="pf-sub">Accomplishments</div>
+            <ul class="pf-list" id="pfAccomplishList"></ul>
+            <div class="pf-add-row edit-only">
+              <input type="text" id="pfAccomplishInput" placeholder="Add accomplishment" maxlength="160" />
+              <button type="button" id="pfAccomplishAdd">Add</button>
+            </div>
             <div class="note editable" id="pfEventsNote" contenteditable="true" data-placeholder="Participated in the following activities:"></div>
           </div>
 
@@ -1159,7 +1164,7 @@
                 <div>
                   <div class="editable" id="pfCompany" contenteditable="true" data-placeholder="Company name" style="font-weight:800;"></div>
                 </div>
-                <div class="cube"></div>
+                <img src="DES_logo.png" alt="DES Financing Corporation" />
               </div>
             </div>
           </div>
@@ -1419,20 +1424,20 @@
       </div>
     </div>
     <div class="pm-schedule-bar">
-      <div class="pm-schedule-info" id="pmDueInfo"></div>
       <button class="btn btn-ghost btn-sm" id="pmEditDue">Set due date</button>
+      <div class="pm-schedule-info" id="pmDueInfo"></div>
     </div>
     <div class="pm-schedule-bar">
-      <div class="pm-schedule-info" id="pmScheduleInfo"></div>
       <button class="btn btn-ghost btn-sm" id="pmEditSchedule">Edit schedule</button>
+      <div class="pm-schedule-info" id="pmScheduleInfo"></div>
     </div>
     <div class="pm-schedule-bar" id="pmPartnersBar" style="background:transparent;">
+      <button class="btn btn-ghost btn-sm" id="pmEditPartners">Edit partners</button>
       <div class="pm-schedule-info" style="flex:1;flex-wrap:wrap;">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span id="pmPartnersLabel">No partners</span>
         <div class="partner-chips" id="pmPartnerChips"></div>
       </div>
-      <button class="btn btn-ghost btn-sm" id="pmEditPartners">Edit partners</button>
     </div>
     <div class="pm-tabs">
       <div class="pm-tab active" data-tab="tasks">Tasks</div>
@@ -1557,6 +1562,7 @@
       development: [],
       external: [],
       employees: [],
+      accomplishments: [],
       projectsManual: [],
       deployment: [],
       eventsNote: '',
@@ -1704,7 +1710,7 @@
       if(raw){
         const parsed = JSON.parse(raw);
         profile = Object.assign(defaultProfile(), parsed);
-        ['strengths','development','external','employees','projectsManual','deployment'].forEach(k=>{
+        ['strengths','development','external','employees','accomplishments','projectsManual','deployment'].forEach(k=>{
           if(!Array.isArray(profile[k])) profile[k] = defaultProfile()[k];
         });
       }
@@ -3162,6 +3168,7 @@
     renderEditableList('pfDevList', profile.development, 'development');
     renderEditableList('pfExternalList', profile.external, 'external');
     renderEditableList('pfEmployeeList', profile.employees, 'employees');
+    renderEditableList('pfAccomplishList', profile.accomplishments, 'accomplishments');
     renderEditableList('pfProjectsManual', profile.projectsManual, 'projectsManual');
     renderEditableList('pfDeployList', profile.deployment, 'deployment');
 
@@ -3179,32 +3186,6 @@
         autoProj.appendChild(li);
       });
     }
-
-    // Auto accomplishments
-    const autoAcc = document.getElementById('pfAccomplishAuto');
-    autoAcc.innerHTML = '';
-    const acc = [];
-    doneProjects().forEach(p=>{
-      acc.push({text: 'Completed project: '+p.name, ts: p.completedAt||p.createdAt});
-    });
-    projects.forEach(p=>{
-      p.tasks.filter(t=>t.status==='done').forEach(t=>{
-        acc.push({text: t.text+' ('+p.name+')', ts: t.updatedAt||t.createdAt});
-      });
-      (p.accomplishments||[]).forEach(a=>{
-        acc.push({text: a.text+' ('+p.name+')', ts: a.createdAt});
-      });
-    });
-    acc.sort((a,b)=>b.ts-a.ts);
-    if(!acc.length){
-      autoAcc.innerHTML = '<li style="list-style:none;opacity:.75;">Log accomplishments or complete tasks to fill this</li>';
-    } else {
-      acc.slice(0,12).forEach(item=>{
-        const li = document.createElement('li');
-        li.textContent = item.text;
-        autoAcc.appendChild(li);
-      });
-    }
   }
 
   ['pfName','pfTitle','pfHired','pfAbout','pfHobbies','pfStars','pfEventsNote','pfTargetRole','pfCompany'].forEach((id,i)=>{
@@ -3215,6 +3196,7 @@
   wireListAdd('pfDevInput','pfDevAdd','development');
   wireListAdd('pfExternalInput','pfExternalAdd','external');
   wireListAdd('pfEmployeeInput','pfEmployeeAdd','employees');
+  wireListAdd('pfAccomplishInput','pfAccomplishAdd','accomplishments');
   wireListAdd('pfProjectInput','pfProjectAdd','projectsManual');
   wireListAdd('pfDeployInput','pfDeployAdd','deployment');
 
@@ -3232,7 +3214,7 @@
   });
 
   document.getElementById('resetProfileBtn').addEventListener('click', ()=>{
-    if(!confirm('Clear all profile fields? Auto projects and accomplishments from Tracker will remain.')) return;
+    if(!confirm('Clear all profile fields? Auto key projects from Tracker will remain.')) return;
     profile = defaultProfile();
     save();
     renderProfile();
